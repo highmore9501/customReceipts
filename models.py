@@ -15,7 +15,7 @@ class Template(object):
         self.background = Image.open(background)
         self.title = title
         self.value_list = []
-        self.default_font = ImageFont.truetype(r'%windir%\Fonts\DejaVuSerif.ttf', 12)
+        self.default_font = ImageFont.truetype(r'%windir%\Fonts\Deng.ttf', 36)
         workbook = xlrd.open_workbook(file)
         index = sheet
         if sheet is None:
@@ -25,34 +25,39 @@ class Template(object):
         for i in range(1, rows):
             self.value_list.append(table.row_values(i))
 
-    def load_data(self, data):
+    def load_data(self, data, row):
         workbook = xlrd.open_workbook(data)
         index = workbook.sheet_names()[0]
         table = workbook.sheet_by_name(index)
-        rows = table.nrows
-        if len(self.value_list) != rows:
+        cols = table.ncols
+        if len(self.value_list) != cols:
             print('数据数量与配置不匹配，请检查配置文件或者数据文件')
             exit()
-        for i in range(1, rows):
-            self.value_list[i][0] = table.row_values(i)[0]
+        for i in range(1, cols):
+            self.value_list[i][0] = table.row_values(row)[i]
 
     def add_text_to_image(self, value):
-        text = value[0]
-        if value[1] is None or value[2] is None:
+
+        if isinstance(value[0], float) and value[5] == '金额':
+            text = "%.2f" % value[0]
+        else:
+            text = value[0]
+
+        if value[1] == '' or value[2] == '':
             custom_font = self.default_font
         else:
             custom_font = ImageFont.truetype(value[1], value[2])
-        x = value[3]
-        y = value[4]
+
+        x = int(value[3])
+        y = int(value[4])
         image = self.background.convert('RGBA')
         text_overlay = Image.new('RGBA', image.size, (255, 255, 255, 0))
         image_draw = ImageDraw.Draw(text_overlay)
         # 设置文本文字位置
         text_xy = (x, y)
-        # 设置文本颜色和透明度
-        image_draw.text(text_xy, text, font=custom_font, fill=(76, 234, 124, 180))
+        # 设置文本颜色
+        image_draw.text(text_xy, text, (0, 0, 0), font=custom_font)
         image_with_text = Image.alpha_composite(image, text_overlay)
         self.background = image_with_text
         return self.background
-
 
