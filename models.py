@@ -33,20 +33,24 @@ class Template(object):
         if len(self.value_list) != cols:
             print('数据数量与配置不匹配，请检查配置文件或者数据文件')
             exit()
-        for i in range(1, cols):
+        for i in range(0, cols):
             self.value_list[i][0] = table.row_values(row)[i]
 
     def add_text_to_image(self, value):
 
         if isinstance(value[0], float) and value[5] == '金额':
             text = "%.2f" % value[0]
+        elif isinstance(value[0], float):
+            text = str(int(value[0]))
+        elif isinstance(value[0], int):
+            text = str(value[0])
         else:
             text = value[0]
 
         if value[1] == '' or value[2] == '':
             custom_font = self.default_font
         else:
-            custom_font = ImageFont.truetype(value[1], value[2])
+            custom_font = ImageFont.truetype(value[1], int(value[2]))
 
         x = int(value[3])
         y = int(value[4])
