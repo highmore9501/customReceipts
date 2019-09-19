@@ -3,7 +3,7 @@ from PIL import Image, ImageDraw, ImageFont
 import xlrd
 
 
-class Template(object):
+class Receipts(object):
     """
     此类定义要打印的表单背景，以及初始化需要打印的值
     初始化时从将指定的xlsx文件中读取设置，生成一个包含列表的列表，包含表单中所有的字段名称，值，字体，大小，位置
@@ -11,7 +11,7 @@ class Template(object):
     所以当这些值要被打印的时候，按顺序调用text,font,size,x,y就可以了
     """
 
-    def __init__(self, background, title, file, sheet=None):
+    def __init__(self, background, title, file, sheet=None):  # 初始化的时候从指定的sheet里读取表单设置
         self.background = Image.open(background)
         self.title = title
         self.value_list = []
@@ -25,7 +25,7 @@ class Template(object):
         for i in range(1, rows):
             self.value_list.append(table.row_values(i))
 
-    def load_data(self, data, row):
+    def load_data(self, data, row):  # 从数据文件中加载指定行的数据，生成一个列表
         workbook = xlrd.open_workbook(data)
         index = workbook.sheet_names()[0]
         table = workbook.sheet_by_name(index)
@@ -36,7 +36,7 @@ class Template(object):
         for i in range(0, cols):
             self.value_list[i][0] = table.row_values(row)[i]
 
-    def add_text_to_image(self, value):
+    def add_text_to_image(self, value):  # 将数据列表value里的各个值打印到图片上
 
         if isinstance(value[0], float) and value[5] == '金额':
             text = "%.2f" % value[0]
@@ -64,4 +64,3 @@ class Template(object):
         image_with_text = Image.alpha_composite(image, text_overlay)
         self.background = image_with_text
         return self.background
-
