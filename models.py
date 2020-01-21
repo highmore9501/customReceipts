@@ -15,7 +15,7 @@ class Receipts(object):
         self.background = Image.open(background)
         self.title = title
         self.value_list = []
-        self.default_font = ImageFont.truetype(r'%windir%\Fonts\Deng.ttf', 36)
+        self.default_font = ImageFont.truetype(r'.\Fonts\fzhtjw.ttf', 48)
         workbook = xlrd.open_workbook(file)
         index = sheet
         if sheet is None:

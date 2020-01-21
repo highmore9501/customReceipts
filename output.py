@@ -36,12 +36,9 @@ while True:
             receipt = Receipts(background=background, title=outType, file=file, sheet=outType)
             receipt.load_data(datafile, i)
             for value in receipt.value_list:
-                try:
-                    output = receipt.add_text_to_image(value)
-                except Exception:
-                    pass
+                receipt.add_text_to_image(value)
             filename = r'./output/' + user + outType + str(i) + '.png'
-            output.save(filename)
+            receipt.background.save(filename)
             print('第{}张图片输出成功'.format(i))
 
         print('所有图片输出成功，请去output文件夹下查看图片。')
